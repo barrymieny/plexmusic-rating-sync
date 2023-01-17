@@ -1,6 +1,6 @@
 # plexmusic-rating-sync
 
-Install Requirments with:
+Install Requirements with:
 
 ```
 pip install -r requirements.txt
