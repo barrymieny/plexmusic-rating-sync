@@ -4,6 +4,7 @@
 
 from plexapi.myplex import MyPlexAccount
 import mutagen
+import mutagen.id3
 import os
 import io
 from mutagen import id3
@@ -20,7 +21,8 @@ DEBUGALBUM = os.getenv('DEBUGALBUM') == "true"
 LOGNOID3ERROR = os.getenv('LOGNOID3ERROR') == "true"
 LOGALLRATINGS = os.getenv('LOGALLRATINGS') == "true"
 SHOWPROGRESS = os.getenv('SHOWPROGRESS') == "true"
-RATINGID3TAG = os.getenv('RATINGID3TAG')
+RATINGPOPMEMAIL = os.getenv('RATINGPOPMEMAIL')
+RATINGID3TAG="POPM:" + RATINGPOPMEMAIL
 # Counters
 insync = 0
 justsynced = 0
@@ -65,7 +67,13 @@ def getAllPOPM(localfile):
 
 def updateID3Rating(localfile, rating):
     file = ID3(localfile)
-    file[RATINGID3TAG].rating=rating
+    if RATINGID3TAG in file:
+        tag = file[RATINGID3TAG]
+        tag.rating=rating
+    else:
+        frame= mutagen.id3.POPM(email=RATINGPOPMEMAIL, rating= rating)
+        file.add(frame)
+    
     file.save()
 
 
@@ -118,7 +126,7 @@ for album in albums:
                 trackmsg = print_to_string('\t' + track.title + ' is already rated in Plex')
                 rating = getAllPOPM(localfile)
                 newrating = convertRatingsFromPlexToId3(float(track.userRating))
-                if (rating.rating != newrating):
+                if ((rating == None) or (rating.rating != newrating)):
                     if (UPDATEFILE):
                         # Ratings on both? We prefer plex to dictate for now, so we always write it on the file if present
                         print('\t**Updating file ' + track.locations[0] + ' from rating:',rating,' to rating:', newrating )
