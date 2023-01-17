@@ -6,24 +6,6 @@ Install Requirments with:
 pip install -r requirements.txt
 ```
 
-Create a .env file and populate it with your secrets:
-
-```
-PLEXSERVER="127.0.0.1"
-PLEXUSER="plexusername"
-PLEXPW="plexpassword"
-PLEXLIB="MYNAS1"
-PLEXREPLACEFROM = "/volume1/music"
-PLEXREPLACETO = "\\MYNAS1\music"
-UPDATEFILE="false"
-UPDATEPLEX="false"
-DEBUGSONG="false"
-LOGNOID3ERROR="false"
-LOGALLRATINGS="false"
-SHOWPROGRESS="true"
-RATINGPOPMEMAIL="no@email"
-```
-
 Running from docker
 
 ```
@@ -48,3 +30,22 @@ docker run \
 -v "/volume1/music:/music:rw" \
 tailslide/sync-plex-music-ratings:latest
 ```
+
+Running outside of docker: Create a .env file and populate it with your secrets:
+
+```
+PLEXSERVER="127.0.0.1"
+PLEXUSER="plexusername"
+PLEXPW="plexpassword"
+PLEXLIB="MYNAS1"
+PLEXREPLACEFROM = "/volume1/music"
+PLEXREPLACETO = "\\MYNAS1\music"
+UPDATEFILE="false"
+UPDATEPLEX="false"
+DEBUGSONG="false"
+LOGNOID3ERROR="false"
+LOGALLRATINGS="false"
+SHOWPROGRESS="true"
+RATINGPOPMEMAIL="no@email"
+```
+
