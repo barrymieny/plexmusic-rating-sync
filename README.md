@@ -21,7 +21,7 @@ DEBUGSONG="false"
 LOGNOID3ERROR="false"
 LOGALLRATINGS="false"
 SHOWPROGRESS="true"
-RATINGID3TAG="POPM:no@email"
+RATINGPOPMEMAIL="no@email"
 ```
 
 Running from docker
@@ -43,7 +43,8 @@ docker run \
 -e LOGNOID3ERROR="false" \
 -e LOGALLRATINGS="false" \
 -e SHOWPROGRESS="true" \
--e RATINGID3TAG="POPM:no@email" \
+-e RATINGPOPMEMAIL="no@email" \
+--rm \
 -v "/volume1/music:/music:rw" \
 tailslide/sync-plex-music-ratings:latest
 ```
