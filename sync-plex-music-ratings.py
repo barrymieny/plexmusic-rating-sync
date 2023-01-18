@@ -218,10 +218,10 @@ for album in albums:
 
     for track in tracks:
         # Iterates across all tracks
-        if (track.locations[0]== "/volume1/music/!!FLAC/Bad Company - Bad Company (2006 Gold CD) (Flac)/02 - Rock Steady.FLAC"):
-            print("Check this one out")
-        if ((str(album) == '<Album:185809:Broken-Boy-Soldiers>') and (track.title == "Together") ):
-            print("Check this one out")
+        # if (track.locations[0]== "/volume1/music/Music/Various/De-Lovely Movie Soundtrack/16 Blow, Gabriel, Blow.mp3"):
+        #     print("Check this one out")
+        # if ((str(album) == '<Album:185809:Broken-Boy-Soldiers>') and (track.title == "Together") ):
+        #     print("Check this one out")
         try:
             trackmsg = ""
             localfile = makeRemoteString(track.locations[0])
