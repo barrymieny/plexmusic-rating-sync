@@ -22,10 +22,13 @@ docker run \
 -e DEBUGRESOURCES="false" \
 -e DEBUGSONG="false" \
 -e DEBUGALBUM="false" \
--e LOGNOID3ERROR="false" \
+-e LOGNOID3ERROR="true" \
+-e LOGNOHEADERNOTFOUNDERROR="false" \
+-e LOGINVALIDCHUNKERROR="true" \
 -e LOGALLRATINGS="false" \
 -e SHOWPROGRESS="true" \
 -e RATINGPOPMEMAIL="no@email" \
+-e FLACRATINGTAG="RATING" \
 --rm \
 -v "/volume1/music:/music:rw" \
 tailslide/sync-plex-music-ratings:latest
@@ -43,9 +46,12 @@ PLEXREPLACETO = "\\MYNAS1\music"
 UPDATEFILE="false"
 UPDATEPLEX="false"
 DEBUGSONG="false"
-LOGNOID3ERROR="false"
+LOGNOID3ERROR="true"
+LOGNOHEADERNOTFOUNDERROR="false"  #known issue in mutagen https://github.com/quodlibet/mutagen/issues/562
+LOGINVALIDCHUNKERROR="true" #known issue in mutagen https://github.com/quodlibet/mutagen/issues/592
 LOGALLRATINGS="false"
 SHOWPROGRESS="true"
 RATINGPOPMEMAIL="no@email"
+FLACRATINGTAG="RATING"
 ```
 
