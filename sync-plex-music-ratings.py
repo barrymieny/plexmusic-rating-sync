@@ -156,7 +156,7 @@ def updateFileRating(file, filerating):
 def updateFlacRating(file, filerating):
     try:    
         print(' to rating:', filerating )
-        file.tags[FLACRATINGTAG] = filerating
+        file.tags[FLACRATINGTAG] = str(filerating)
         file.save()
     except Exception as ex:
         #error!
