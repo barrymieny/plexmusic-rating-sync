@@ -147,8 +147,10 @@ def updateFileRating(file, filerating):
     try:
         if (type(file) is mutagen.flac.FLAC):
             updateFlacRating(file, filerating)
-        else:
+        elif (type(file) is mutagen.mp.MP3):
             updateID3Rating(file, filerating)
+        else:
+            print('***unknown file type:', type(file))
     except Exception as ex:
         #error!
         raise
@@ -171,7 +173,7 @@ def updateID3Rating(file, filerating):
             tag.rating=filerating
         else:
             frame= mutagen.id3.POPM(email=RATINGPOPMEMAIL, rating= filerating)
-            file.add(frame)
+            file.tags.add(frame)
         
         file.save()
     except Exception as ex:
