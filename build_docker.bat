@@ -4,9 +4,10 @@ docker scan tailslide/sync-plex-music-ratings --severity high
 echo listing files
 pause
 docker run --rm tailslide/sync-plex-music-ratings ls -alR
-echo running built container
-pause
-docker run --env-file=.\.env tailslide/sync-plex-music-ratings
+rem can't run this remotely on my dev machine must run on plex server on me setup
+rem echo running built container
+rem pause
+rem docker run --env-file=.\.env tailslide/sync-plex-music-ratings
 echo pushing to dockerhub
 pause
 docker push tailslide/sync-plex-music-ratings:latest
