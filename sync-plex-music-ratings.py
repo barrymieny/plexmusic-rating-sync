@@ -147,7 +147,7 @@ def updateFileRating(file, filerating):
     try:
         if (type(file) is mutagen.flac.FLAC):
             updateFlacRating(file, filerating)
-        elif (type(file) is mutagen.mp.MP3):
+        elif (type(file) is mutagen.mp3.MP3):
             updateID3Rating(file, filerating)
         else:
             print('***unknown file type:', type(file))
