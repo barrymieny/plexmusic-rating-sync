@@ -3,6 +3,7 @@
 # Requires eyed3 and plexapi libraries, written & tested in python 3.9
 
 from plexapi.myplex import MyPlexAccount
+from plexapi.server import PlexServer
 import mutagen
 import mutagen.id3
 import os
@@ -14,6 +15,8 @@ from mutagen.mp3 import HeaderNotFoundError
 from mutagen.id3 import ID3,  COMR, Frames, Frames_2_2, ID3Warning, ID3JunkFrameError, ID3NoHeaderError
 
 LIB = os.getenv('PLEXLIB')
+PLEXTOKEN = os.getenv('PLEXTOKEN')
+PLEXURL = os.getenv('PLEXURL')
 PLEXREPLACEFROM = os.getenv('PLEXREPLACEFROM')
 PLEXREPLACETO = os.getenv('PLEXREPLACETO')
 UPDATEPLEX = os.getenv('UPDATEPLEX') == "true"
@@ -197,16 +200,20 @@ if (UPDATEPLEX):
 else:
     print("Will **NOT** update plex if existing rating in files")
 
+if (PLEXTOKEN != None):
+    plex = PlexServer(PLEXURL, PLEXTOKEN)
+    print('connected with token')
+else:
+    account = MyPlexAccount(os.getenv('PLEXUSER'), os.getenv('PLEXPW'))
+    if (DEBUGRESOURCES):
+        resources = account.resources()
+        print("Found the following resources:")
+        for res in resources:
+            print(res)
 
-account = MyPlexAccount(os.getenv('PLEXUSER'), os.getenv('PLEXPW'))
-if (DEBUGRESOURCES):
-    resources = account.resources()
-    print("Found the following resources:")
-    for res in resources:
-        print(res)
+    plex = account.resource(LIB).connect()
+    print('connected with password')
 
-plex = account.resource(LIB).connect()
-print('connected')
 curalbum = 0
 albums = plex.library.section('Music').albums()
 albumcount = len(albums)

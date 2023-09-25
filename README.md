@@ -6,7 +6,7 @@ Install Requirements with:
 pip install -r requirements.txt
 ```
 
-Running from docker
+Running from docker (alternatively you can use PLEXTOKEN and PLEXURL to authenticate directly to the server)
 
 ```
 docker run \
