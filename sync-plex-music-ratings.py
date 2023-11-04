@@ -2,6 +2,14 @@
 #
 # Requires eyed3 and plexapi libraries
 # Written and tested in Python 3.9
+#
+# Plex ratings 0.0-10.0
+# FLAC ratings
+# - MediaMonkey 0-100
+# - MusicBee 0-255
+# - MusicBrainz Picard 0.0-1.0
+# - Others 0-5
+# ID3 ratings 0-255
 
 from plexapi.myplex import MyPlexAccount
 from plexapi.server import PlexServer
@@ -54,23 +62,18 @@ def makeRemoteString(str):
 def getRatingValueFromFile(file):
     return file.tag.popularities.get(b'MusicBee')
 
-# ID3 has ['RATING'] 0-255, Plex has rating 0.0-10.0
 def convertRatingsFromId3ToPlex(n):
     return round(float(float(n / 255) * float(10)), 1)
 
-# ID3 has ['RATING'] 0-255, Plex has rating 0.0-10.0
 def convertRatingsFromPlexToId3(n):
     return int(float(n / 10) * float(255))
 
-# FLAC sometimes has ['RATING'] 0-100 (MediaMonkey) also sometimes has 0-5 (others)
-# Store as 0-100 but handle case of 0-5 on read
 def convertRatingsFromFlacToPlex(n):
     if (n <= 5):
         return float(n) * 2
     else:
         return float(float(n) / float(10))
 
-# FLAC has ['RATING'] 0-100 (MediaMonkey) also sometimes has 0-5 (others)
 def convertRatingsFromPlexToFlac(n):
     return int(round(n * 10, 0))
 
@@ -183,10 +186,6 @@ def updateID3Rating(file, filerating):
     except Exception as ex:
         # error!
         raise
-
-# Plex ratings 0.0-10.0
-# MusicBee ratings 0-255
-# ID3 ratings 0-255
 
 print("Start. Connecting to Plex with user " + PLEXUSER)
 if (UPDATEFILE):
