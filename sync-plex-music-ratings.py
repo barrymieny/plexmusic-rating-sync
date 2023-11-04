@@ -32,8 +32,8 @@ LOGINVALIDCHUNKERROR = os.getenv('LOGINVALIDCHUNKERROR') == "true"
 LOGNOHEADERNOTFOUNDERROR = os.getenv('LOGNOHEADERNOTFOUNDERROR') == "true"
 LOGALLRATINGS = os.getenv('LOGALLRATINGS') == "true"
 SHOWPROGRESS = os.getenv('SHOWPROGRESS') == "true"
-RATINGPOPMEMAIL = os.getenv('RATINGPOPMEMAIL')
-RATINGID3TAG = "POPM:" + RATINGPOPMEMAIL
+RATINGEMAIL = os.getenv('RATINGEMAIL')
+RATINGID3TAG = "POPM:" + RATINGEMAIL
 FLACRATINGTAG = os.getenv('FLACRATINGTAG')
 
 # Counters
@@ -173,7 +173,7 @@ def updateID3Rating(file, filerating):
             tag = file[RATINGID3TAG]
             tag.rating = filerating
         else:
-            frame = mutagen.id3.POPM(email = RATINGPOPMEMAIL, rating = filerating)
+            frame = mutagen.id3.POPM(email = RATINGEMAIL, rating = filerating)
             file.tags.add(frame)
 
         file.save()

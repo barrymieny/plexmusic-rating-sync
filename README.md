@@ -27,7 +27,7 @@ docker run \
 -e LOGINVALIDCHUNKERROR="true" \
 -e LOGALLRATINGS="false" \
 -e SHOWPROGRESS="true" \
--e RATINGPOPMEMAIL="no@email" \
+-e RATINGEMAIL="no@email" \
 -e FLACRATINGTAG="RATING" \
 --rm \
 -v "/volume1/music:/music:rw" \
@@ -51,7 +51,7 @@ LOGNOHEADERNOTFOUNDERROR="false"  #known issue in mutagen https://github.com/quo
 LOGINVALIDCHUNKERROR="true" #known issue in mutagen https://github.com/quodlibet/mutagen/issues/592
 LOGALLRATINGS="false"
 SHOWPROGRESS="true"
-RATINGPOPMEMAIL="no@email"
+RATINGEMAIL="no@email"
 FLACRATINGTAG="RATING"
 ```
 
