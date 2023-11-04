@@ -10,10 +10,13 @@ import mutagen.id3
 import os
 import io
 import traceback
+from dotenv import load_dotenv
 from mutagen import id3
 from mutagen._iff import InvalidChunk
 from mutagen.mp3 import HeaderNotFoundError
 from mutagen.id3 import ID3, COMR, Frames, Frames_2_2, ID3Warning, ID3JunkFrameError, ID3NoHeaderError
+
+load_dotenv()
 
 LIB = os.getenv('PLEXLIB')
 PLEXUSER = os.getenv('PLEXUSER')

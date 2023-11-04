@@ -2,13 +2,13 @@
 
 Install Requirements with:
 
-```
+```bash
 pip install -r requirements.txt
 ```
 
 Running from docker (alternatively you can use PLEXTOKEN and PLEXURL to authenticate directly to the server)
 
-```
+```bash
 docker run \
 -e PYTHONUNBUFFERED=1 \
 -e PLEXSERVER="127.0.0.1" \
@@ -34,24 +34,4 @@ docker run \
 tailslide/sync-plex-music-ratings:latest
 ```
 
-Running outside of docker: Create a .env file and populate it with your secrets:
-
-```
-PLEXSERVER="127.0.0.1"
-PLEXUSER="plexusername"
-PLEXPW="plexpassword"
-PLEXLIB="MYNAS1"
-PLEXREPLACEFROM = "/volume1/music"
-PLEXREPLACETO = "\\MYNAS1\music"
-UPDATEFILE="false"
-UPDATEPLEX="false"
-DEBUGSONG="false"
-LOGNOID3ERROR="true"
-LOGNOHEADERNOTFOUNDERROR="false"  #known issue in mutagen https://github.com/quodlibet/mutagen/issues/562
-LOGINVALIDCHUNKERROR="true" #known issue in mutagen https://github.com/quodlibet/mutagen/issues/592
-LOGALLRATINGS="false"
-SHOWPROGRESS="true"
-RATINGEMAIL="no@email"
-FLACRATINGTAG="RATING"
-```
-
+Running outside of docker: Copy `.example.env` to `.env` and populate it with your secrets.
