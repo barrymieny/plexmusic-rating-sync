@@ -1,6 +1,7 @@
-# USE AT YOUR OWN RISK!!!!
+# USE AT YOUR OWN RISK!
 #
-# Requires eyed3 and plexapi libraries, written & tested in python 3.9
+# Requires eyed3 and plexapi libraries
+# Written and tested in Python 3.9
 
 from plexapi.myplex import MyPlexAccount
 from plexapi.server import PlexServer
@@ -12,9 +13,11 @@ import traceback
 from mutagen import id3
 from mutagen._iff import InvalidChunk
 from mutagen.mp3 import HeaderNotFoundError
-from mutagen.id3 import ID3,  COMR, Frames, Frames_2_2, ID3Warning, ID3JunkFrameError, ID3NoHeaderError
+from mutagen.id3 import ID3, COMR, Frames, Frames_2_2, ID3Warning, ID3JunkFrameError, ID3NoHeaderError
 
 LIB = os.getenv('PLEXLIB')
+PLEXUSER = os.getenv('PLEXUSER')
+PLEXPW = os.getenv('PLEXPW')
 PLEXTOKEN = os.getenv('PLEXTOKEN')
 PLEXURL = os.getenv('PLEXURL')
 PLEXREPLACEFROM = os.getenv('PLEXREPLACEFROM')
@@ -30,8 +33,9 @@ LOGNOHEADERNOTFOUNDERROR = os.getenv('LOGNOHEADERNOTFOUNDERROR') == "true"
 LOGALLRATINGS = os.getenv('LOGALLRATINGS') == "true"
 SHOWPROGRESS = os.getenv('SHOWPROGRESS') == "true"
 RATINGPOPMEMAIL = os.getenv('RATINGPOPMEMAIL')
-RATINGID3TAG="POPM:" + RATINGPOPMEMAIL
-FLACRATINGTAG= os.getenv('FLACRATINGTAG')
+RATINGID3TAG = "POPM:" + RATINGPOPMEMAIL
+FLACRATINGTAG = os.getenv('FLACRATINGTAG')
+
 # Counters
 insync = 0
 justsynced = 0
@@ -39,7 +43,7 @@ notag = 0
 error = 0
 
 def makeRemoteString(str):
-    if (PLEXREPLACEFROM is None or PLEXREPLACEFROM==""):
+    if (PLEXREPLACEFROM is None or PLEXREPLACEFROM == ""):
         return str
     else:
         return str.replace(PLEXREPLACEFROM, PLEXREPLACETO)
@@ -47,32 +51,32 @@ def makeRemoteString(str):
 def getRatingValueFromFile(file):
     return file.tag.popularities.get(b'MusicBee')
 
-# ID3 has ['RATING'] 0-255, plex has rating 0.0-10.0
+# ID3 has ['RATING'] 0-255, Plex has rating 0.0-10.0
 def convertRatingsFromId3ToPlex(n):
-    return round(float(float(n/255) * float(10)),1)
+    return round(float(float(n / 255) * float(10)), 1)
 
-# ID3 has ['RATING'] 0-255, plex has rating 0.0-10.0
+# ID3 has ['RATING'] 0-255, Plex has rating 0.0-10.0
 def convertRatingsFromPlexToId3(n):
-    return int(float(n/10) * float(255))
+    return int(float(n / 10) * float(255))
 
-# flac sometimes has ['RATING'] 0-100 (mediamonkey) also sometimes has 0-5 (others)
-# store as 0-100 but handle case of 0-5 on read
+# FLAC sometimes has ['RATING'] 0-100 (MediaMonkey) also sometimes has 0-5 (others)
+# Store as 0-100 but handle case of 0-5 on read
 def convertRatingsFromFlacToPlex(n):
     if (n <= 5):
         return float(n) * 2
     else:
-        return float(float(n)/float(10))
+        return float(float(n) / float(10))
 
-# flac has ['RATING'] 0-100 (mediamonkey) also sometimes has 0-5 (others)
+# FLAC has ['RATING'] 0-100 (MediaMonkey) also sometimes has 0-5 (others)
 def convertRatingsFromPlexToFlac(n):
-    return int(round(n*10,0))
+    return int(round(n * 10, 0))
 
 def convertRatingsToMusicBee(n):
     return int(n * 255 / 10)
 
 def print_to_string(*args, **kwargs):
     output = io.StringIO()
-    print(*args, file=output, **kwargs)
+    print(*args, file = output, **kwargs)
     contents = output.getvalue()
     output.close()
     return contents
@@ -80,17 +84,15 @@ def print_to_string(*args, **kwargs):
 def getFile(localfile):
     try:
         file = mutagen.File(localfile)
-        # if ((file == None) and localfile.lower().endswith('.dts')):
-        #     file = mutagen.wave.WAVE(localfile)
         return file
     except InvalidChunk as ic:
-        #error!
+        # error!
         raise
     except HeaderNotFoundError as hnf:
-        #error!
+        # error!
         raise
     except Exception as ex:
-        #error!
+        # error!
         raise
 
 def convertPlexRatingToFileRating(file, plexrating):
@@ -101,10 +103,8 @@ def convertPlexRatingToFileRating(file, plexrating):
         else:
             return convertRatingsFromPlexToId3(plexrating)
     except Exception as ex:
-        #error!
+        # error!
         raise
-    
-
 
 def getFileRatingAsPlexRating(file):
     try:
@@ -121,20 +121,20 @@ def getFileRatingAsPlexRating(file):
                     print("found rating for " + rating + "=", popm)
             return convertRatingsFromId3ToPlex(filerating)
     except InvalidChunk as ic:
-        #error!
+        # error!
         raise
     except HeaderNotFoundError as hnf:
-        #error!
+        # error!
         raise
     except Exception as ex:
-        #error!
+        # error!
         raise
 
 def getFileRating(file):
     try:
         if (type(file) is mutagen.flac.FLAC):
             if ((FLACRATINGTAG in file.tags) and (file.tags[FLACRATINGTAG] is not None)):
-                ratings=file.tags[FLACRATINGTAG]
+                ratings = file.tags[FLACRATINGTAG]
                 ratingnum = int(ratings[0]) if ratings[0].isdigit() else None
                 return ratingnum # tags are always arrays for some weird reason
         else:
@@ -143,7 +143,7 @@ def getFileRating(file):
                     return file[RATINGID3TAG].rating
         return None
     except Exception as ex:
-        #error!
+        # error!
         raise
 
 def updateFileRating(file, filerating):
@@ -155,56 +155,52 @@ def updateFileRating(file, filerating):
         else:
             print('***unknown file type:', type(file))
     except Exception as ex:
-        #error!
+        # error!
         raise
 
 def updateFlacRating(file, filerating):
-    try:    
-        print(' to rating:', filerating )
+    try:
+        print(' to rating:', filerating)
         file.tags[FLACRATINGTAG] = str(filerating)
         file.save()
     except Exception as ex:
-        #error!
+        # error!
         raise
 
 def updateID3Rating(file, filerating):
     try:
-        #file = ID3(localfile)
-
         if RATINGID3TAG in file:
             tag = file[RATINGID3TAG]
-            tag.rating=filerating
+            tag.rating = filerating
         else:
-            frame= mutagen.id3.POPM(email=RATINGPOPMEMAIL, rating= filerating)
+            frame = mutagen.id3.POPM(email = RATINGPOPMEMAIL, rating = filerating)
             file.tags.add(frame)
-        
+
         file.save()
     except Exception as ex:
-        #error!
+        # error!
         raise
 
+# Plex ratings 0.0-10.0
+# MusicBee ratings 0-255
+# ID3 ratings 0-255
 
-
-#plex ratings 0 - 10
-#musicBee ratings 0 - 255
-#ID3 ratings 0-255
-
-print("start. connecting to plex user=" + os.getenv('PLEXUSER'))
+print("Start. Connecting to Plex with user " + PLEXUSER)
 if (UPDATEFILE):
-    print("Will update files if existing rating in plex")
+    print("Will update files if existing rating in Plex")
 else:
-    print("Will **NOT** update files if existing rating in plex")
+    print("Will **NOT** update files if existing rating in Plex")
 
 if (UPDATEPLEX):
-    print("Will update plex if existing rating in files")
+    print("Will update Plex if existing rating in files")
 else:
-    print("Will **NOT** update plex if existing rating in files")
+    print("Will **NOT** update Plex if existing rating in files")
 
 if (PLEXTOKEN != None):
     plex = PlexServer(PLEXURL, PLEXTOKEN)
-    print('connected with token')
+    print('Connected with token')
 else:
-    account = MyPlexAccount(os.getenv('PLEXUSER'), os.getenv('PLEXPW'))
+    account = MyPlexAccount(PLEXUSER, PLEXPW)
     if (DEBUGRESOURCES):
         resources = account.resources()
         print("Found the following resources:")
@@ -212,7 +208,7 @@ else:
             print(res)
 
     plex = account.resource(LIB).connect()
-    print('connected with password')
+    print('Connected with password')
 
 curalbum = 0
 albums = plex.library.section('Music').albums()
@@ -227,10 +223,6 @@ for album in albums:
 
     for track in tracks:
         # Iterates across all tracks
-        # if (track.locations[0]== "/volume1/music/Music/Various/De-Lovely Movie Soundtrack/16 Blow, Gabriel, Blow.mp3"):
-        #     print("Check this one out")
-        # if ((str(album) == '<Album:185809:Broken-Boy-Soldiers>') and (track.title == "Together") ):
-        #     print("Check this one out")
         try:
             trackmsg = ""
             localfile = makeRemoteString(track.locations[0])
@@ -238,63 +230,58 @@ for album in albums:
             fileplexrating = getFileRatingAsPlexRating(file)
             filerating = getFileRating(file)
 
-            if isinstance(track.userRating, float): 
+            if isinstance(track.userRating, float):
                 # Checks to see if the Plex userRating exists, var type will be float if track is rated, it will be nonetype if not.
-                
                 trackmsg = print_to_string('\t' + track.title + ' is already rated in Plex')
-                newrating =convertPlexRatingToFileRating (file, track.userRating)
-                #newrating = convertRatingsFromPlexToId3(float(track.userRating))
+                newrating = convertPlexRatingToFileRating(file, track.userRating)
                 if ((filerating == None) or (fileplexrating != track.userRating)):
                     if (UPDATEFILE):
-                        print('\t**Updating file ' + track.locations[0] + ' from rating:',filerating,' to rating:', newrating )
-                        # Ratings on both? We prefer plex to dictate for now, so we always write it on the file if present
+                        print('\t**Updating file ' + track.locations[0] + ' from rating:', filerating, ' to rating:', newrating)
+                        # Ratings on both? We prefer Plex to dictate for now, so we always write it on the file if present
                         updateFileRating(file, newrating)
                         justsynced += 1
                     else:
-                        print('\t**Run in update mode to Update file ' + track.locations[0] +' from rating:',filerating,' to rating:', newrating )
+                        print('\t**Run in update mode to update file ' + track.locations[0] + ' from rating:', filerating, ' to rating:', newrating)
             else:
-                # This case is where Plex has no rating so it tries to fetch a value from the id3 tag
-                trackmsg = print_to_string('\t "' + track.title + '" (' + track.locations[0]  + ') has no rating in Plex, checking file id3 tag. ', end = '')
-                
+                # This case is where Plex has no rating so it tries to fetch a value from the metadata rating tag
+                trackmsg = print_to_string('\t "' + track.title + '" (' + track.locations[0] + ') has no rating in Plex, checking file metadata rating tag. ', end = '')
+
                 if (fileplexrating is not None):
                     if (UPDATEPLEX):
-                        # this case is where Plex has no rating but the iD3 tag does so the next steps import the rating into Plex.
-                        print('\t"' + track.title + '" (' + track.locations[0]  + ') ID3 tag rating ' + str(filerating) + ' found and saved to Plex userRating field as ' + str(fileplexrating))
+                        # This case is where Plex has no rating but the metadata rating tag does so the next steps import the rating into Plex.
+                        print('\t"' + track.title + '" (' + track.locations[0] + ') metadata rating tag rating ' + str(filerating) + ' found and saved to Plex userRating field as ' + str(fileplexrating))
                         track.rate(fileplexrating)
-                        justsynced += 1 
-
+                        justsynced += 1
                     else:
-                        print('\t**Run in update mode to Update plex song ' + str(album) + ":" + track.title + ' to rating:', fileplexrating)
+                        print('\t**Run in update mode to update Plex song ' + str(album) + ": " + track.title + ' to rating:', fileplexrating)
                 else:
                     trackmsg = trackmsg + print_to_string('No tag present in file or Plex.')
                     notag += 1
         except ID3NoHeaderError as noid3:
             if (LOGNOID3ERROR):
-                print('\tNo ID3 Tag found on ' + track.locations[0]) #, err )
+                print('\tNo ID3 tag found on ' + track.locations[0])
                 print(traceback.format_exc())
             error += 1
         except InvalidChunk as ic:
             if (LOGINVALIDCHUNKERROR):
-                print('\tInvalid Chunk on  ' + track.locations[0]) #, err )
+                print('\tInvalid chunk on ' + track.locations[0])
                 print(traceback.format_exc())
-            #error!
+            # error!
             error += 1
         except HeaderNotFoundError as hnf:
             if (LOGNOHEADERNOTFOUNDERROR):
-                print('\tHeader Not Found Error on ' + track.locations[0]) #, err )
+                print('\tHeader not found error on ' + track.locations[0])
                 print(traceback.format_exc())
             error += 1
         except Exception as err:
-            print('\n\t** Exception processing file ' + track.locations[0]  +':', err )
+            print('\n\t** Exception processing file ' + track.locations[0] +':', err)
             print(traceback.format_exc())
             error += 1
         if (DEBUGSONG):
             print(trackmsg)
 
-        
-
-# Stats Output                          
-print(str(insync) + ' files alread in sync')
+# Stats
+print(str(insync) + ' files already in sync')
 print(str(justsynced) + ' newly synced files')
 print(str(notag) + ' files with no tags')
 print(str(error) + ' files had errors')
