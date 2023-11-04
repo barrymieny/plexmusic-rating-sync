@@ -59,9 +59,6 @@ def makeRemoteString(str):
     else:
         return str.replace(PLEXREPLACEFROM, PLEXREPLACETO)
 
-def getRatingValueFromFile(file):
-    return file.tag.popularities.get(b'MusicBee')
-
 def convertRatingsFromId3ToPlex(n):
     return round(float(float(n / 255) * float(10)), 1)
 
@@ -76,9 +73,6 @@ def convertRatingsFromFlacToPlex(n):
 
 def convertRatingsFromPlexToFlac(n):
     return int(round(n * 10, 0))
-
-def convertRatingsToMusicBee(n):
-    return int(n * 255 / 10)
 
 def print_to_string(*args, **kwargs):
     output = io.StringIO()
