@@ -46,6 +46,7 @@ SHOWPROGRESS = os.getenv('SHOWPROGRESS') == "true"
 RATINGID3EMAIL = os.getenv('RATINGID3EMAIL')
 RATINGID3TAG = "POPM:" + RATINGID3EMAIL
 RATINGFLACTAG = os.getenv('RATINGFLACTAG') + os.getenv('RATINGFLACEMAIL')
+RATINGFLACAPP = os.getenv('RATINGFLACAPP')
 
 # Counters
 insync = 0
@@ -66,13 +67,28 @@ def convertRatingsFromPlexToId3(n):
     return int(float(n / 10) * float(255))
 
 def convertRatingsFromFlacToPlex(n):
-    if (n <= 5):
+    # MusicBrainz Picard
+    if (isinstance(n, float) and n <= 1):
+        return float(n) * 10
+    # Others
+    elif (n <= 5):
         return float(n) * 2
-    else:
+    # MediaMonkey
+    elif (n % 20 == 0):
         return float(float(n) / float(10))
+    # MusicBee
+    else:
+        return convertRatingsFromId3ToPlex(n)
 
 def convertRatingsFromPlexToFlac(n):
-    return int(round(n * 10, 0))
+    if (RATINGFLACAPP == 'Picard'):
+        return float(round(n) / 10)
+    elif (RATINGFLACAPP == 'MediaMonkey'):
+        return int(round(n * 10, 0))
+    elif (RATINGFLACAPP == 'MusicBee'):
+        return convertRatingsFromPlexToId3(n)
+    else:
+        return int(round(n / 2, 0))
 
 def print_to_string(*args, **kwargs):
     output = io.StringIO()
@@ -97,7 +113,6 @@ def getFile(localfile):
 
 def convertPlexRatingToFileRating(file, plexrating):
     try:
-        filerating = getFileRating(file)
         if (type(file) is mutagen.flac.FLAC):
             return convertRatingsFromPlexToFlac(plexrating)
         else:
@@ -135,8 +150,10 @@ def getFileRating(file):
         if (type(file) is mutagen.flac.FLAC):
             if ((RATINGFLACTAG in file.tags) and (file.tags[RATINGFLACTAG] is not None)):
                 ratings = file.tags[RATINGFLACTAG]
-                ratingnum = int(ratings[0]) if ratings[0].isdigit() else None
-                return ratingnum # tags are always arrays for some weird reason
+                if ratings[0].replace('.', '', 1).isdigit():
+                    return float(ratings[0]) if "." in ratings[0] else int(ratings[0])
+                else:
+                    return None
         else:
             if RATINGID3TAG in file:
                 if (file[RATINGID3TAG] is not None):

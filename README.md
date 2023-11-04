@@ -30,6 +30,7 @@ docker run \
 -e RATINGID3EMAIL="user@example.com" \
 -e RATINGFLACTAG="RATING:" \
 -e RATINGFLACEMAIL="user@example.com" \
+-e RATINGFLACAPP="Picard" \
 --rm \
 -v "/volume1/music:/music:rw" \
 tailslide/sync-plex-music-ratings:latest
