@@ -245,6 +245,8 @@ for album in albums:
                         justsynced += 1
                     else:
                         print('\t**Run in update mode to update file ' + track.locations[0] + ' from rating:', filerating, ' to rating:', newrating)
+                elif (fileplexrating == track.userRating):
+                    insync += 1
             else:
                 # This case is where Plex has no rating so it tries to fetch a value from the metadata rating tag
                 trackmsg = print_to_string('\t "' + track.title + '" (' + track.locations[0] + ') has no rating in Plex, checking file metadata rating tag. ', end = '')
