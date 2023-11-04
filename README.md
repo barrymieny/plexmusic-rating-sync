@@ -27,8 +27,9 @@ docker run \
 -e LOGINVALIDCHUNKERROR="true" \
 -e LOGALLRATINGS="false" \
 -e SHOWPROGRESS="true" \
--e RATINGEMAIL="no@email" \
--e FLACRATINGTAG="RATING" \
+-e RATINGID3EMAIL="user@example.com" \
+-e RATINGFLACTAG="RATING:" \
+-e RATINGFLACEMAIL="user@example.com" \
 --rm \
 -v "/volume1/music:/music:rw" \
 tailslide/sync-plex-music-ratings:latest

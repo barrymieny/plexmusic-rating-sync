@@ -43,9 +43,9 @@ LOGINVALIDCHUNKERROR = os.getenv('LOGINVALIDCHUNKERROR') == "true"
 LOGNOHEADERNOTFOUNDERROR = os.getenv('LOGNOHEADERNOTFOUNDERROR') == "true"
 LOGALLRATINGS = os.getenv('LOGALLRATINGS') == "true"
 SHOWPROGRESS = os.getenv('SHOWPROGRESS') == "true"
-RATINGEMAIL = os.getenv('RATINGEMAIL')
-RATINGID3TAG = "POPM:" + RATINGEMAIL
-FLACRATINGTAG = os.getenv('FLACRATINGTAG')
+RATINGID3EMAIL = os.getenv('RATINGID3EMAIL')
+RATINGID3TAG = "POPM:" + RATINGID3EMAIL
+RATINGFLACTAG = os.getenv('RATINGFLACTAG') + os.getenv('RATINGFLACEMAIL')
 
 # Counters
 insync = 0
@@ -133,8 +133,8 @@ def getFileRatingAsPlexRating(file):
 def getFileRating(file):
     try:
         if (type(file) is mutagen.flac.FLAC):
-            if ((FLACRATINGTAG in file.tags) and (file.tags[FLACRATINGTAG] is not None)):
-                ratings = file.tags[FLACRATINGTAG]
+            if ((RATINGFLACTAG in file.tags) and (file.tags[RATINGFLACTAG] is not None)):
+                ratings = file.tags[RATINGFLACTAG]
                 ratingnum = int(ratings[0]) if ratings[0].isdigit() else None
                 return ratingnum # tags are always arrays for some weird reason
         else:
@@ -161,7 +161,7 @@ def updateFileRating(file, filerating):
 def updateFlacRating(file, filerating):
     try:
         print(' to rating:', filerating)
-        file.tags[FLACRATINGTAG] = str(filerating)
+        file.tags[RATINGFLACTAG] = str(filerating)
         file.save()
     except Exception as ex:
         # error!
@@ -173,7 +173,7 @@ def updateID3Rating(file, filerating):
             tag = file[RATINGID3TAG]
             tag.rating = filerating
         else:
-            frame = mutagen.id3.POPM(email = RATINGEMAIL, rating = filerating)
+            frame = mutagen.id3.POPM(email = RATINGID3EMAIL, rating = filerating)
             file.tags.add(frame)
 
         file.save()
